@@ -1,0 +1,12 @@
+apiVersion: v1 # <- Version API de kubernetes que utiliza. 
+                # Importante tener en cuenta ya que puede cambiar entre versiones del cluster. 
+                # Tener en cuenta que los recursos y sus definiciones estan en consante mantenimiento
+kind: Namespace # <- Tipo de recurso que estamos describiendo/creando
+metadata: # <- Etiquetas (key:value). Su funcion puede ser meramente informativa o modificar algun 
+          # comportamiento del recurso. Depende de cada caso. Leer su correspondiente documentacion
+  labels:
+    name: intro-k8s-namespace # <- Identificador del recurso. NO confundir con el nombre de namespace 
+                              # que queremos crear
+  name: intro-k8s # <- Para un recurso namespace, aca es donde definimos el nombre del namespace que 
+                  # queremos crear
+  

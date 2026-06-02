@@ -1,0 +1,17 @@
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: kube-lab
+servers: 1
+agents: 1
+
+ports:
+  - port: 30080:30080  # Mapeamos el puerto 30080 de tu PC al 30080 del nodo
+    nodeFilters:
+      - server:*
+
+options:
+  k3d:
+    wait: true
+    timeout: "120s"
+    disableLoadbalancer: false

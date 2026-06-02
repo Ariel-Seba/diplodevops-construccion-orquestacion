@@ -1,0 +1,35 @@
+#####################
+# app-saludo ----------------------------------------------
+#####################
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-saludo-deployment
+  namespace: intro-k8s
+  labels:
+    app: app-saludo
+    maintainer: matiops
+spec:
+  containers:
+    - name: app-saludo
+      image: matiops/intro-k8s:app-saludo
+      ports:
+      - containerPort: 8000
+        name: web
+        protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-saludo-service
+  namespace: intro-k8s
+spec:
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8000
+      nodePort: 30080 # DEBE coincidir con el puerto mapeado en K3D
+  selector:
+    app: app-saludo  

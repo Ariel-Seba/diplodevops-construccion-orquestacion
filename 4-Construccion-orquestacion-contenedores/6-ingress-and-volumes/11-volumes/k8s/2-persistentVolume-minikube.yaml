@@ -1,0 +1,30 @@
+# Lectura recomendada: https://kubernetes.io/docs/tasks/configure-pod-container/configure-persistent-volume-storage/#create-a-persistentvolume
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: app-volumen-pv
+  # Sin namespace. Recurso no "namespaceado"
+spec:
+  accessModes:
+    - ReadWriteOnce # El volumen puede ser montado como read-write por un unico nodo
+  capacity:
+    storage: 2Gi
+  hostPath: # Archivo o directorio del nodo para emular un almacenammianto accesible por red. 
+            # mas info: https://kubernetes.io/docs/tasks/configure-pod-container/configure-persistent-volume-storage/#create-a-persistentvolume
+    path: /data/pv0001/ # https://minikube.sigs.k8s.io/docs/handbook/persistent_volumes/
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: app-volumen-pvc  
+  namespace: intro-k8s # Recurso SI "namespaceado"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ""
+  volumeName: app-volumen-pv # DIPLO: Mismo nombre que el PV. ¿Que pasa si no coinciden?
+  resources:
+    requests:
+      storage: 1Gi # DIPLO: Experimentar.¿que pasa si ponemos una capacidad mayor que el PV?
+                    # ¿Que pasa si aplicamos, hacemos un cambio en capacidad y aplicamos de nuevo?

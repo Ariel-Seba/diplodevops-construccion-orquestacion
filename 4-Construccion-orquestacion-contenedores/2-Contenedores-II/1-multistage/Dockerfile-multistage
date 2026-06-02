@@ -1,0 +1,10 @@
+# Taken from https://docs.docker.com/build/building/multi-stage/
+
+FROM golang:1.21 AS builder-stage
+WORKDIR /src
+COPY ./main.go .
+RUN go build -o /bin/hello ./main.go
+
+FROM scratch
+COPY --from=builder-stage /bin/hello /bin/hello
+CMD ["/bin/hello"]

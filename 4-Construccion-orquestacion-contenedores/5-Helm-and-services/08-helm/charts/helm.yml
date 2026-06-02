@@ -1,0 +1,54 @@
+---
+# Source: diplodevops-helm/templates/namespaces.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    name: intro-k8s-namespace
+  name: intro-k8s
+---
+# Source: diplodevops-helm/templates/services.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-saludo-service
+  namespace: intro-k8s
+spec:
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8000
+  selector:
+    appName: app-saludo  # Potencia de helm: facilita trabajar con los campos "cruzados"
+---
+# Source: diplodevops-helm/templates/deployments.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-saludo-deployment
+  namespace: intro-k8s
+  labels:
+    appName: app-saludo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      appName: app-saludo
+  template:
+    metadata:
+      labels:
+        appName: app-saludo
+    spec:
+      containers:
+      - name: app-saludo
+        image: matiops/intro-k8s:app-saludo
+        ports:
+        - containerPort: 8000
+        resources:
+          requests:
+            memory: 200Mi
+            cpu: 250m
+          limits:
+            memory: 2Gi
+            cpu: 500m

@@ -1,0 +1,41 @@
+#####################
+# app-saludo ----------------------------------------------
+#####################
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-saludo-pod
+  namespace: intro-k8s
+  labels:
+    app: app-saludo # <- en este caso será usado por el service
+    maintainer: matiops #<- Somos libres de agregar cualquier label a gusto nuestro
+spec:
+  containers:
+    - name: app-saludo # <- Nombre del conenedor a crear
+      image: matiops/intro-k8s:app-saludo  # <- Imagen
+      ports:
+      - containerPort: 8000
+        name: web
+        protocol: TCP
+      resources:
+        requests:
+          memory: "64Mi"
+          cpu: "100m"
+        limits:
+          memory: "128Mi"
+          cpu: "150m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-saludo-service
+  namespace: intro-k8s
+spec:
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 8081   # <- Prestar atencion
+      targetPort: 8000
+  selector:
+    app: app-saludo # <-  

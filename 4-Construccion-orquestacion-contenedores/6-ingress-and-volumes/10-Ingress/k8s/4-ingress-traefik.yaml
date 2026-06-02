@@ -1,0 +1,30 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-saludo-prefix
+  namespace: intro-k8s
+spec:
+  stripPrefix:
+    prefixes:
+      - /app-saludo
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: intro-k8s-ingress
+  namespace: intro-k8s
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: intro-k8s-strip-saludo-prefix@kubernetescrd
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: diplodevops.example
+    http:
+      paths:
+      - path: /app-saludo
+        pathType: Prefix
+        backend:
+          service:
+            name: app-saludo-service
+            port:
+              number: 8081

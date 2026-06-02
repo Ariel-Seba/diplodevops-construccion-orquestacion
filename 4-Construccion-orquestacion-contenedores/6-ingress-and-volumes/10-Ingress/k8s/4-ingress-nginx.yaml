@@ -1,0 +1,31 @@
+# kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.5.1/deploy/static/provider/cloud/deploy.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: intro-k8s-ingress
+  namespace: intro-k8s
+  annotations: # <- utilizados para modificar el comportamiento del ingress. Cada motor ingress tiene las suyas, por lo que es RECOMENDABLE leer la documentacion
+    nginx.ingress.kubernetes.io/rewrite-target: /$2 # <- le pedimos que haga una reescritura de path, eliminando la primer parte
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: diplodevops.example # <- Nombre del dominio para el cual las reglas a continuación se van a tener en cuenta.
+                              # curl --resolve "diplodevops.example:80:$( minikube ip )" -i http://diplodevops.example/app-saludo
+                              # Alternativa: editar /etc/hosts 
+    http:
+      paths:
+      - path: /app-contador
+        pathType: Prefix
+        backend:
+          service: # <- Indicamos a cual service dirigir la query para esta regla
+            name: app-contador-service
+            port:
+              number: 8080
+      - path: /app-saludo(/|$)(.*) # <- Necesario para implementar el path rewrite. Surge de la documentación
+        pathType: ImplementationSpecific # <- Necesario para implementar el path rewrite. Surge de la documentación
+        backend:
+          service:
+            name: app-saludo-service
+            port:
+              number: 8081 # <- Como son dos services diferentes, ambos podrian escuchar el 8000 sin problemas. Sin embargo, por cuestion pedagogica, se mantiene la diferencia.
+---

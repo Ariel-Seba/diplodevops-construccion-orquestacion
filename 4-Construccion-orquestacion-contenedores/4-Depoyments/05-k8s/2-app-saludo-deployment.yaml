@@ -1,0 +1,41 @@
+#####################
+# app-saludo ----------------------------------------------
+#####################
+---
+apiVersion: apps/v1
+kind: Deployment # ReplicaSets + Pods = Deployment
+metadata:
+  name: app-saludo-deployment
+  namespace: intro-k8s
+  labels:
+    app: app-saludo # <-
+    maintainer: matiops #<- Somos libres de agregar cualquier label a gusto nuestro
+spec:
+  replicas: 1 # <- 
+  selector:
+    matchLabels:
+      app: app-saludo # <- Prestar atencion. Con este match label el replica set sabe que pods encuentra el pod a administrar
+  template: # <- Comienza especificacion de PODs
+    metadata:
+      labels:
+        app: app-saludo # <- Label del pod. Debe coincidir con el matchLabel del ReplicaSet
+    spec:
+      containers:
+      - name: app-saludo # <- Nombre del conenedor a crear
+        image: matiops/intro-k8s:app-saludo  # <- Imagen
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-saludo-service
+  namespace: intro-k8s
+spec:
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 8081   # <- Prestar atencion
+      targetPort: 8000
+  selector:
+    app: app-saludo # <-  

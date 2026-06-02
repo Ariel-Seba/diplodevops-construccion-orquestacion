@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+
+  app-volumen:
+    build: ./app-volumen/
+    ports:
+      - "8081:8000"
+    environment:
+      UPLOAD_PATH: 'updloads'
+    volumes:
+      - ./uploads:/code/src/uploads

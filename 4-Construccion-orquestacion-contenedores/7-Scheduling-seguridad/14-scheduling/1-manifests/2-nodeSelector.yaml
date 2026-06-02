@@ -1,0 +1,43 @@
+#####################
+# app-saludo ----------------------------------------------
+#####################
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-saludo-selector-deployment
+  namespace: intro-k8s
+  labels:
+    app: app-saludo
+    maintainer: matiops
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: app-saludo
+  template:
+    metadata:
+      labels:
+        app: app-saludo
+    spec:
+      nodeSelector: # <- Es una especificación del POD
+        arch: arm
+      containers:
+      - name: app-saludo
+        image: matiops/intro-k8s:app-saludo
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-saludo-selector-service
+  namespace: intro-k8s
+spec:
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8000
+  selector:
+    app: app-saludo

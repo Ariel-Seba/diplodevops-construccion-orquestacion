@@ -1,0 +1,30 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-uptime-app-prefix
+  namespace: intro-k8s
+spec:
+  stripPrefix:
+    prefixes:
+      - /uptime-app
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: intro-k8s-ingress
+  namespace: intro-k8s
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: intro-k8s-strip-uptime-app-prefix@kubernetescrd # Formato: <namespace>-<nombre>@kubernetescrd
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: diplodevops.example
+    http:
+      paths:
+      - path: /uptime-app
+        pathType: Prefix
+        backend:
+          service:
+            name: uptime-app-service
+            port:
+              number: 8080
