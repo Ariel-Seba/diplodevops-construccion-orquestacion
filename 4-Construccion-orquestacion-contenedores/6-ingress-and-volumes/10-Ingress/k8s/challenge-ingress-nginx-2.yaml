@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: intro-k8s-challenge-ingress
+  namespace: intro-k8s
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: diplodevops.example 
+    http:
+      paths:
+      - path: /app-contador
+        pathType: Prefix
+        backend:
+          service:
+            name: app-contador-service
+            port:
+              number: 8081
+      - path: /app-saludo(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: app-saludo-service
+            port:
+              number: 8080
+---

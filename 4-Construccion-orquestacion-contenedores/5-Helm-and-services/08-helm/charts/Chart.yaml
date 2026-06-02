@@ -1,0 +1,7 @@
+apiVersion: v2
+name: diplodevops-helm # DIPLO: Si utiliza ECR, debe tener EL MISMO NOMBRE QUE EL ECR
+description: Un chart simple para introducción a Helm
+type: application # Application: Conjunto de templates listos para desplegar.
+                  # Library: Empaquetar funciones que se incluiran como dependencias en otros charts. No desplegable.
+version: 0.1.0 # Version del chart. Incrementar cuando se modifique algo de los templates o el chart mismo. (https://semver.org/)
+appVersion: "1.16.0" # Version de la APLICACIÓN. Incrementar cuando cambia codigo de app.

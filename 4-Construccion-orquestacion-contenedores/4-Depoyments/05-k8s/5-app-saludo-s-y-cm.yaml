@@ -1,0 +1,59 @@
+#####################
+# app-saludo ----------------------------------------------
+#####################
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-saludo-deployment
+  namespace: intro-k8s
+  labels:
+    app: app-saludo-sycm
+    maintainer: matiops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-saludo-sycm
+  template:
+    metadata:
+      labels:
+        app: app-saludo-sycm
+    spec:
+      containers:
+      - name: app-saludo-env
+        image: matiops/intro-k8s:app-saludo-env
+        imagePullPolicy: Always
+        env:
+        - name: SECRETS_PATH # Esta envar se defina directamente en este manifiesto
+          value: "/run/secrets/app-saludo-secret/SECRET_MSG"
+        - name: ENG_MSG # Defino la envar
+                        # Con este nombre el pod lee la var
+          valueFrom:
+            configMapKeyRef:
+              name: app-saludo-configmap # nombre del configmap de donde traemos la key
+              key: english_message # Key a traer del configmap
+        volumeMounts: # Aca "montamos" el secreto leido en un archivo en el pod
+        - name: secret-spell
+          mountPath: "/run/secrets/app-saludo-secret"
+          readOnly: true
+        ports:
+        - containerPort: 8000
+      volumes:  # Desde aca "leemos" el secret creado antes
+      - name: secret-spell
+        secret:
+          secretName: app-saludo-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-saludo-service
+  namespace: intro-k8s
+spec:
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8000
+  selector:
+    app: app-saludo-sycm

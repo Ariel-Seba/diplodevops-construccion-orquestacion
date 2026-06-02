@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-saludo-configmap
+  namespace: intro-k8s
+data:
+  english_message: "Hello everyone!. I am a simple app and this is my route in english.\n"

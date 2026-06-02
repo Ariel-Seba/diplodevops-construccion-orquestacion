@@ -1,0 +1,16 @@
+namespace: intro-k8s
+app:
+  name: app-saludo
+  replicaCount: 1
+  image: matiops/intro-k8s:app-saludo
+  containerPort: 8000
+  cpu:
+    request: "250m"
+    limit: "500m"
+  memory:
+    request: "200Mi"
+    limit: "2Gi"
+
+service:
+  type: ClusterIP
+  port: 8081

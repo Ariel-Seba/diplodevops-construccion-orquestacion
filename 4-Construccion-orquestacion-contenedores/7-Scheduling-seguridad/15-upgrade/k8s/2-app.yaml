@@ -1,0 +1,46 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uptime-app-deployment
+  namespace: intro-k8s
+  labels:
+    app: uptime-app
+    maintainer: matiops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uptime-app
+  template:
+    metadata:
+      labels:
+        app: uptime-app
+    spec:
+      containers:
+      - name: uptime-app
+        image: uptime-app:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: uptime-app-service
+  namespace: intro-k8s
+spec:
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8000
+  selector:
+    app: uptime-app  

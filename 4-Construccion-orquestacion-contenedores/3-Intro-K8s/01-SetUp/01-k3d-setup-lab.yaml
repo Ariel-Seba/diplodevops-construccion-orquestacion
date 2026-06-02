@@ -1,0 +1,24 @@
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: kube-lab
+servers: 3  # Cantidad de nodos en control plane. En este caso, está en modo HA.
+agents: 2   # Cantidad de worker nodes
+            # Tener en cuenta que a mayor cantidad de nodos, mayor consumo de recursos.
+
+# Punto de entrada a la red del cluster. Mapeamos el puerto local 8080 con el puerto 80 del cluster.
+# Se profundizará mas en la clase de networking. Mientras, puede ver el contenedor docker nginx serverlb
+ports:
+  - port: 8080:80
+    nodeFilters:
+      - loadbalancer
+# K3D levanta un contenedor especial (nginx) que actúa como Load Balancer externo al cluster. 
+# Este filtro indica que el tráfico que llegue a tu localhost:8080 debe ser redirigido al 
+# puerto 80 de ese balanceador, el cual luego lo enviará a los Ingress de tus nodos.
+
+
+options:
+  k3d:
+    wait: true # El comando no termina hasta que todos los nodos estén en estado Ready
+    timeout: "120s" # Tiempo límite de espera antes de marcar error de despliegue.
+    disableLoadbalancer: false # Asegura que el contenedor de balanceo de carga se cree (necesario para que el mapeo de puertos anterior funcione).

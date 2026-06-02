@@ -1,0 +1,25 @@
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: kube-lab
+servers: 3  # Para el upgrade necesitamos que de entrada levante en modo HA, por lo que minimo necesitamos 3
+agents: 1
+
+image: rancher/k3s:v1.19.0-k3s1
+# image: rancher/k3s:v1.33.0-k3s1
+
+ports:
+  - port: 8080:80
+    nodeFilters:
+      - loadbalancer
+
+options:
+  k3d:
+    wait: true
+    timeout: "120s"
+    disableLoadbalancer: false
+  k3s:
+    extraArgs: 
+      - arg: --disable=traefik  # Deshabilito traefik para instalar nginx ingress
+        nodeFilters:
+          - server:*

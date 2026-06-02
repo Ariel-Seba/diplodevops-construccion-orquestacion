@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubernetes-pods-extractor
+  namespace: kubernetes-pods-extractor
+  labels:
+    app: kubernetes-pods-extractor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kubernetes-pods-extractor
+  template:
+    metadata:
+      labels:
+        app: kubernetes-pods-extractor
+    spec:
+      containers:
+      - name: kubernetes-pods-extractor
+        image: shayulmer/kubernetes-pods-extractor:latest
+      serviceAccountName: kubernetes-pods-extractor-sa  # Especificamos el Service Account que usará
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kubernetes-pods-extractor-sa
+  namespace: kubernetes-pods-extractor
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+  name: kubernetes-pods-extractor-service 
+  namespace: kubernetes-pods-extractor
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: kubernetes-pods-extractor
+  type: ClusterIP

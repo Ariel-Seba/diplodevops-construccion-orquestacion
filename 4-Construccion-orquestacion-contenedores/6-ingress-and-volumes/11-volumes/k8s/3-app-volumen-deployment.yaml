@@ -1,0 +1,50 @@
+#####################
+# app-volumen ----------------------------------------------
+#####################
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-volumen-deployment
+  namespace: intro-k8s
+  labels:
+    app: app-volumen
+    maintainer: matiops
+spec:
+  replicas: 1 # DIPLO: Al finalizar la demostracion, escalar a 2 y ver las carpetas de "upload"
+  selector:
+    matchLabels:
+      app: app-volumen
+  template:
+    metadata:
+      labels:
+        app: app-volumen
+    spec:
+      containers:
+      - name: app-volumen
+        image: matiops/intro-k8s:app-volumen
+        ports:
+        - containerPort: 8000
+        volumeMounts: # Aca montamos el volumen del pod a un path del contenedor
+        - name: app-volumen-pv
+          mountPath: "/code/src/uploads"
+          readOnly: false # DIPLO:
+      volumes:  # Desde aca decimos que volumen puede leer el pod
+      - name: app-volumen-pv
+        persistentVolumeClaim: # DIPLO: ¿Que pasa si eliminamos esta y la linea que sigue?
+          claimName: app-volumen-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-volumen-service
+  namespace: intro-k8s
+spec:
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8000
+  selector:
+    app: app-volumen  

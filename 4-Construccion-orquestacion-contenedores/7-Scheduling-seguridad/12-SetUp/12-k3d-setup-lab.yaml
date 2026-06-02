@@ -1,0 +1,49 @@
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: kube-lab
+servers: 1
+agents: 3
+options:
+  k3s:
+    extraArgs:
+      # Nodo Agente 0: Simula un nodo con GPU
+      - arg: --node-label=hardware=gpu
+        nodeFilters:
+          - agent:0
+      - arg: --node-label=department=ai
+        nodeFilters:
+          - agent:0
+      - arg: --node-label=tier=premium
+        nodeFilters:
+          - agent:0
+      - arg: --node-taint=dedicated=gpu:NoExecute
+        nodeFilters:
+          - agent:0
+      
+      # Nodo Agente 1: Simula un nodo de alta seguridad (con Taint)
+      - arg: --node-label=arch=arm
+        nodeFilters:
+          - agent:1
+
+      # Nodo Agente 2: Nodo estándar para cargas generales
+      - arg: --node-label=size=standard
+        nodeFilters:
+          - agent:2
+      - arg: --node-taint=dedicated=backend:PreferNoSchedule
+        nodeFilters:
+          - agent:2
+  k3d:
+    wait: true
+    timeout: "120s"
+    disableLoadbalancer: false      
+
+ports:
+  - port: 8080:80
+    nodeFilters:
+      - server:*
+
+# Opcional Mac: persistir datos aun si se elimina el cluster
+# volumes:
+#  - volume: /Users/tu-usuario/k3d-data:/var/lib/rancher/k3s/storage@all
+

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: diplodevops-helm
+description: Un chart simple para introducción a Helm
+type: application
+version: 0.1.0
+appVersion: "1.16.0"

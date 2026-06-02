@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+
+  app-saludo-env:
+    # image: matiops/intro-k8s:app-saludo-env
+    build: ./app-saludo-env/src/
+    ports:
+      - "8081:8000"
+    environment:
+      ENG_MSG: 'Hello people!. I am a simple app and this is my route in english.\n'
+    secrets:
+      - SECRET_MSG
+
+secrets:
+  SECRET_MSG:
+    file: mensaje_secreto.txt
+

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    name: intro-k8s-namespace
+  name: intro-k8s
+  
