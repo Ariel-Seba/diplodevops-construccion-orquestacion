@@ -6,7 +6,9 @@ services:
     build: ./app-volumen/
     ports:
       - "8081:8000"
-    environment:
-      UPLOAD_PATH: 'updloads'
     volumes:
-      - ./uploads:/code/src/uploads
+      - uploads-data:/code/src/uploads
+
+volumes:
+  uploads-data:
+

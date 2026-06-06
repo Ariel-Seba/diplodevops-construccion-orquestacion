@@ -1,0 +1,21 @@
+FROM golang:1.21 AS base
+WORKDIR /src
+COPY . .
+RUN go mod init hello
+
+# Etapa 1: validación estática
+FROM base AS lint
+RUN go vet ./...
+
+# Etapa 2: tests unitarios (solo corre si lint pasó)
+FROM lint AS test
+RUN go test ./...
+
+# Etapa 3: compilación (solo corre si lint y test pasaron)
+FROM test AS builder
+RUN go build -o /bin/hello ./main.go
+
+# Imagen final: solo el binario
+FROM scratch
+COPY --from=builder /bin/hello /bin/hello
+CMD ["/bin/hello"]
